@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>📚 小说书架 · 笔趣阁源</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 全局背景：类似 view.html 的图片 + 模糊遮罩 */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: url('https://yileila.top/wbk/images/bg.webp') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+        /* 半透明遮罩，提升文字可读性 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: -1;
+        }
+
+        /* 主容器：白色半透明卡片风格 */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+        }
+
+        /* 导航栏：半透明深色 */
+        .navbar-custom {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .navbar-custom .navbar-brand {
+            color: white;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 1.4rem;
+        }
+        .navbar-custom .navbar-brand:hover {
+            color: #ffd966;
+        }
+
+        /* 内容区域内边距 */
+        .content-wrap {
+            padding: 2rem 1.8rem;
+        }
+
+        /* 卡片样式：圆润、阴影、悬浮效果 */
+        .card {
+            border: none;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.95);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        /* 书籍封面图片样式 */
+        .book-cover {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 12px 0 0 12px;
+        }
+        .object-fit-cover {
+            object-fit: cover;
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .btn-group .btn {
+            flex: 1 0 auto;
+            margin-bottom: 0.25rem;
+        }
+        @media (max-width: 576px) {
+            .btn-group .btn {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .book-cover {
+                border-radius: 12px 12px 0 0;
+            }
+        }
+
+        /* 按钮样式：柔和圆角 */
+        .btn-custom-primary {
+            background: linear-gradient(135deg, #0366d6, #024ea0);
+            border: none;
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-weight: 500;
+            color: white;
+            transition: all 0.2s;
+        }
+        .btn-custom-primary:hover {
+            background: linear-gradient(135deg, #024ea0, #013b7a);
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-custom-danger {
+            background: linear-gradient(135deg, #dc3545, #b02a37);
+            border: none;
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-weight: 500;
+            color: white;
+        }
+        .btn-custom-danger:hover {
+            background: linear-gradient(135deg, #b02a37, #8b1e2a);
+        }
+
+        /* 搜索框美化 */
+        .search-input {
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            background: white;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .search-btn {
+            border-radius: 50px;
+            padding: 10px 24px;
+            background: #0366d6;
+            color: white;
+            border: none;
+            font-weight: 500;
+        }
+        .search-btn:hover {
+            background: #024ea0;
+        }
+
+        /* 列表组（目录）美化 */
+        .list-group-item-custom {
+            background: transparent;
+            border-left: none;
+            border-right: none;
+            border-bottom: 1px solid #e9ecef;
+            padding: 12px 16px;
+            transition: background 0.2s;
+        }
+        .list-group-item-custom:hover {
+            background: rgba(3,102,214,0.05);
+        }
+
+        /* 章节正文样式 */
+        .chapter-content {
+            font-size: 1.1rem;
+            line-height: 1.75;
+            color: #2c3e4f;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* 响应式微调 */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .content-wrap { padding: 1.2rem; }
+            .navbar-custom .navbar-brand { font-size: 1.2rem; }
+            .chapter-content { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <!-- 导航栏 -->
+    <nav class="navbar-custom">
+        <div class="container-fluid px-0">
+            <a class="navbar-brand" href="{{ url_for('index') }}">📖 小说书架 · 笔趣阁源</a>
+        </div>
+    </nav>
+
+    <div class="content-wrap">
+        <!-- flash 消息 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for cat, msg in messages %}
+                <div class="alert alert-{{ cat if cat != 'message' else 'info' }} alert-dismissible fade show rounded-pill shadow-sm" role="alert">
+                    {{ msg }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <!-- 各页面内容块 -->
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

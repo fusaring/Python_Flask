@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>🔍 搜索小说</h2>
+<form method="get" action="{{ url_for('search') }}" class="row g-2 mb-4">
+    <div class="col-sm-10">
+        <input type="text" name="q" class="form-control" placeholder="书名/作者" value="{{ keyword }}" required>
+    </div>
+    <div class="col-sm-2">
+        <button class="btn btn-primary w-100">🔍 搜索</button>
+    </div>
+</form>
+
+{% if books %}
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for book in books %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="row g-0 h-100">
+                <div class="col-3">
+                    <img src="{{ book.cover or 'https://via.placeholder.com/90x120' }}" class="img-fluid rounded-start h-100 object-fit-cover" alt="封面" style="object-fit: cover;">
+                </div>
+                <div class="col-9">
+                    <div class="card-body d-flex flex-column h-100">
+                        <div>
+                            <h6 class="card-title">{{ book.title }}</h6>
+                            <p class="card-text small text-muted">{{ book.author }}</p>
+                            <p class="card-text small text-muted">{{ book.intro[:80] }}...</p>
+                        </div>
+                        <form method="POST" action="/add" class="mt-auto">
+                            <input type="hidden" name="book_id" value="{{ book.book_id }}">
+                            <input type="hidden" name="url" value="{{ book.url }}">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-sm btn-success">➕ 添加到书架</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% elif keyword %}
+<div class="alert alert-warning">未找到相关小说，请换个关键词试试。</div>
+{% endif %}
+{% endblock %}

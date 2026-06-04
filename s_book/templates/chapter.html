@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h3 class="card-title">{{ content.title }}</h3>
+        <div class="chapter-content" style="white-space: pre-wrap; line-height: 1.8;">
+            {{ content.content }}
+        </div>
+    </div>
+</div>
+
+<!-- 导航栏 -->
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <div>
+        {% if prev_index %}
+            <a href="{{ url_for('read_chapter', book_id=book_id, chapter_index=prev_index) }}" class="btn btn-secondary">上一章</a>
+        {% else %}
+            <button class="btn btn-secondary" disabled>上一章</button>
+        {% endif %}
+        
+        {% if next_index %}
+            <a href="{{ url_for('read_chapter', book_id=book_id, chapter_index=next_index) }}" class="btn btn-secondary ms-2">下一章</a>
+        {% else %}
+            <button class="btn btn-secondary ms-2" disabled>下一章</button>
+        {% endif %}
+    </div>
+    <div>
+        <span class="text-muted">第 {{ current_index }} / {{ total_chapters }} 章</span>
+    </div>
+    <div>
+        <a href="{{ url_for('book_detail', book_id=book_id) }}" class="btn btn-outline-primary">返回目录</a>
+    </div>
+</div>
+{% endblock %}

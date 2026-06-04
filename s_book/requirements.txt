@@ -1,0 +1,8 @@
+flask
+pymysql
+requests
+beautifulsoup4
+lxml
+cryptography
+curl-cffi
+playwright

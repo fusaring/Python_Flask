@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- 搜索框 -->
+<div class="row mb-4">
+    <div class="col-md-8 mx-auto">
+        <form action="{{ url_for('search') }}" method="GET" class="d-flex">
+            <input class="form-control me-2" type="search" name="q" placeholder="搜索小说（书名/作者）" value="{{ keyword if keyword else '' }}" aria-label="Search">
+            <button class="btn btn-primary" type="submit">🔍 搜索</button>
+        </form>
+    </div>
+</div>
+
+<h2>📚 我的书架</h2>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for book in books %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="row g-0 h-100">
+                <div class="col-4">
+                    <img src="{{ book.cover_url or 'https://via.placeholder.com/90x120' }}" class="img-fluid rounded-start book-cover h-100 object-fit-cover" alt="封面" style="object-fit: cover;">
+                </div>
+                <div class="col-8">
+                    <div class="card-body d-flex flex-column h-100">
+                        <div>
+                            <h6 class="card-title">{{ book.title }}</h6>
+                            <p class="card-text small text-muted">{{ book.author }}</p>
+                        </div>
+                        <div class="btn-group mt-auto flex-wrap gap-2" style="gap: 0.5rem;">
+                            {% if book.last_read_chapter_index %}
+                                <a href="{{ url_for('read_chapter', book_id=book.id, chapter_index=book.last_read_chapter_index) }}" class="btn btn-sm btn-primary">📖 继续阅读</a>
+                            {% else %}
+                                <a href="{{ url_for('read_chapter', book_id=book.id, chapter_index=1) }}" class="btn btn-sm btn-primary">📖 开始阅读</a>
+                            {% endif %}
+                            <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn btn-sm btn-outline-info">📑 目录</a>
+                            <a href="{{ url_for('delete_book', book_id=book.id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('确定要删除《{{ book.title }}》吗？')">🗑️ 删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12"><div class="alert alert-info">暂无书籍，去<a href="{{ url_for('search') }}">搜索</a>添加吧~</div></div>
+    {% endfor %}
+</div>
+{% endblock %}
